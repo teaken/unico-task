@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { ItemProp } from '../models/item.prop.model';
 import { TableItem } from '../models/table-item.model';
 import { User } from '../models/user.model';
@@ -15,46 +16,24 @@ export class TableComponent implements OnInit, OnChanges {
 
   // @Input()
   // dataSource!: TableItem<any>[];
+  lastObjValue$ = new BehaviorSubject({});
 
+  salaySum$ = new BehaviorSubject(0);
   @Input()
   headers: string[] = [];
 
   @Input()
   displayedProps: ItemProp[] = [];
 
-  // @Output() removeTableRow: EventEmitter<string> = new EventEmitter<string>();
-
   tableItem: TableItem<User>[] = [
-    // {
-    //   editMode: false,
-    //   item: {
-    //     id: 1,
-    //     name: 'César',
-    //     lastName: 'Redondo',
-    //     age: 16
-    //   }
-    // },
-    // {
-    //   editMode: false,
-    //   item: {
-    //     id: 2,
-    //     name: 'Inaaya',
-    //     lastName: 'Mohammad',
-    //     age: 50
-    //   }
-    // }
+
   ];
 
   constructor(private fb: FormBuilder) { }
 
   ngOnInit() {
     this.initTableForm();
-    // console.log(this.tableForm)
-    // let editMode = this.tableForm.get('items') as FormArray;
-    // //  console.log()
-  
 
-    // console.log(this.headers)
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -72,17 +51,20 @@ export class TableComponent implements OnInit, OnChanges {
       }
     );
     this.tableItem.forEach(item => {
-      console.log(item)
       this.addGroupToArray(item);
     });
   }
- 
+
   addGroupToArray(tableItem: TableItem<any>) {
     const itemFormGroup = this.fb.group({});
     this.displayedProps.forEach(prop => {
       const itemFormControl = new FormControl(tableItem.item[prop.name]);
       if (prop.mandatory) {
         itemFormControl.setValidators([Validators.required]);
+      }
+      console.log(prop)
+      if(prop.type === 'number'){
+        itemFormControl.setValidators([Validators.pattern(/^-?(0|[1-9]\d*)?$/)])
       }
       if (!tableItem.editMode) {
         itemFormControl.disable();
@@ -92,6 +74,7 @@ export class TableComponent implements OnInit, OnChanges {
     const editModeControl = new FormControl(tableItem.editMode);
     itemFormGroup.addControl('editMode', editModeControl);
     this.itemsArr.push(itemFormGroup);
+
   }
 
 
@@ -102,65 +85,74 @@ export class TableComponent implements OnInit, OnChanges {
 
   saveNewTableItem(formGroup: AbstractControl) {
     if (formGroup.invalid) {
-      alert('invalid');
+      alert('Please check form');
     } else {
-      // formGroup.get('editMode')?.setValue(false);
-      // formGroup.disable();
-
+      let salary = this.salaySum$.getValue();
+      this.salaySum$.next(salary + parseInt(formGroup.value.salary))
       this.toggleInputType(formGroup, false)
-    //  ?.forEach(prop => {
-      //  console.log(this.itemsArr)
-    //   });
-      // console.log( formGroup.get('items')['contols'])
-      // this.formGroup.disable();
-      console.log(formGroup)
-      // this.addGroupToArray(formGroup)
-      // console.log(formGroup)
     }
   }
 
-  toggleInputType(formGroup: AbstractControl, type: boolean){
+  toggleInputType(formGroup: AbstractControl, type: boolean) {
     formGroup.get('editMode')?.setValue(type);
-    if(type){
+    if (type) {
       formGroup.enable();
 
-    }else {
+    } else {
       formGroup.disable();
 
     }
 
   }
 
-  cancelNewTableItem(formGroup: AbstractControl) {
-    console.log(formGroup)
-    this.toggleInputType(formGroup, false)
-  }
+  cancelNewTableItem(formGroup: AbstractControl, i: number) {
   
 
-  editNewTableItem(formGroup: AbstractControl) {
+    if (!this.tableForm.invalid) {
+      for (let index = 0; index < this.itemsArr.length; index++) {
+        if (i === index) {
+          const element = this.itemsArr.controls[index];
+          element.patchValue(this.lastObjValue$.getValue())
+          console.log(element)
+        }
+  
+      }
+      this.toggleInputType(formGroup, false)
+  
+    } else {
+      alert("Try again")
+    }
+  }
+
+
+  editNewTableItem(formGroup: AbstractControl, i: number) {
     console.log(formGroup.value)
+    this.lastObjValue$.next(formGroup.value)
     this.toggleInputType(formGroup, true)
-    
+
   }
 
   removeGroupFromArray(index: any) {
     console.log(index)
+    const updateUsers = [...this.tableItem]
+    let salary = this.salaySum$.getValue();
+    this.salaySum$.next(salary - parseInt(this.itemsArr.controls[index].value.salary))
+    this.itemsArr.controls.splice(index,1);
+   
   }
 
   addUser() {
     if (!this.tableForm.invalid) {
       let id = 0;
-      // const lastUser =  this.users[this.users.length - 1];
       const newItem: TableItem<User> = {
         editMode: true,
         item: {
           id: id + 1,
           name: '',
           lastName: '',
-          age: null
+          salary: null
         }
       };
-      // this.tableItem = [...this.tableItem, newItem];
       this.addGroupToArray(newItem)
     } else {
       alert("required")
@@ -168,13 +160,6 @@ export class TableComponent implements OnInit, OnChanges {
 
   }
 
-  removeUser(row: any) {
-    // this.
-    debugger;
-    const updateUsers = [...this.tableItem]
-    // console.log(newArray)
-    updateUsers.splice(row, 1)
-    this.tableItem = [...updateUsers]
-  }
+  
 
 }

@@ -9,7 +9,7 @@ import { User } from '../shared/models/user.model';
 })
 export class HomeComponent implements OnInit {
 
-  tableHeaders = ['name', 'last name', 'age'];
+  tableHeaders = ['name', 'last name', 'salary'];
   // users: TableItem<User>[] = [
   //   {
   //     editMode: false,
@@ -40,8 +40,9 @@ export class HomeComponent implements OnInit {
       mandatory: true
     },
     {
-      name: 'age',
-      mandatory: true
+      name: 'salary',
+      mandatory: true,
+      type: 'number'
     }
   ];
   constructor() { }

@@ -2,6 +2,6 @@ export interface User {
     id: number;
     name?: string;
     lastName?: string;
-    age?: number | null;
+    salary?: number | null;
     editMode?: boolean;
 }
