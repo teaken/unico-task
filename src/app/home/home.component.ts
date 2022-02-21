@@ -9,7 +9,7 @@ import { User } from '../shared/models/user.model';
 })
 export class HomeComponent implements OnInit {
 
-  tableHeaders = ['name', 'last name', 'salary'];
+  tableHeaders = ['Name', 'Lastname', 'Salary'];
   // users: TableItem<User>[] = [
   //   {
   //     editMode: false,
