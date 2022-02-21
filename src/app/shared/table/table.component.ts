@@ -10,7 +10,7 @@ import { User } from '../models/user.model';
   templateUrl: './table.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TableComponent implements OnInit, OnChanges {
+export class TableComponent implements OnInit {
 
   tableForm!: FormGroup;
 
@@ -18,14 +18,14 @@ export class TableComponent implements OnInit, OnChanges {
   // dataSource!: TableItem<any>[];
   lastObjValue$ = new BehaviorSubject({});
 
-  salaySum$ = new BehaviorSubject(0);
+  sum$ = new BehaviorSubject(0);
   @Input()
   headers: string[] = [];
 
   @Input()
   displayedProps: ItemProp[] = [];
 
-  tableItem: TableItem<User>[] = [
+  tableItem: TableItem<any>[] = [
 
   ];
 
@@ -36,11 +36,6 @@ export class TableComponent implements OnInit, OnChanges {
 
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if ('dataSource' in changes) {
-      // this.initTableForm();
-    }
-  }
 
   initTableForm() {
     this.tableForm = this.fb.group(
@@ -62,7 +57,6 @@ export class TableComponent implements OnInit, OnChanges {
       if (prop.mandatory) {
         itemFormControl.setValidators([Validators.required]);
       }
-      console.log(prop)
       if(prop.type === 'number'){
         itemFormControl.setValidators([Validators.pattern(/^-?(0|[1-9]\d*)?$/)])
       }
@@ -87,8 +81,8 @@ export class TableComponent implements OnInit, OnChanges {
     if (formGroup.invalid) {
       alert('Please check form');
     } else {
-      let salary = this.salaySum$.getValue();
-      this.salaySum$.next(salary + parseInt(formGroup.value.salary))
+      let salary = this.sum$.getValue();
+      this.sum$.next(salary + parseInt(formGroup.value.salary))
       this.toggleInputType(formGroup, false)
     }
   }
@@ -106,19 +100,14 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   cancelNewTableItem(formGroup: AbstractControl, i: number) {
-  
-
     if (!this.tableForm.invalid) {
       for (let index = 0; index < this.itemsArr.length; index++) {
         if (i === index) {
           const element = this.itemsArr.controls[index];
           element.patchValue(this.lastObjValue$.getValue())
-          console.log(element)
         }
-  
       }
       this.toggleInputType(formGroup, false)
-  
     } else {
       alert("Try again")
     }
@@ -126,17 +115,15 @@ export class TableComponent implements OnInit, OnChanges {
 
 
   editNewTableItem(formGroup: AbstractControl, i: number) {
-    console.log(formGroup.value)
     this.lastObjValue$.next(formGroup.value)
     this.toggleInputType(formGroup, true)
 
   }
 
   removeGroupFromArray(index: any) {
-    console.log(index)
     const updateUsers = [...this.tableItem]
-    let salary = this.salaySum$.getValue();
-    this.salaySum$.next(salary - parseInt(this.itemsArr.controls[index].value.salary))
+    let salary = this.sum$.getValue();
+    this.sum$.next(salary - parseInt(this.itemsArr.controls[index].value.salary))
     this.itemsArr.controls.splice(index,1);
    
   }
