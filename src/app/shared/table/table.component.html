@@ -1,6 +1,6 @@
 <form  [formGroup]="tableForm" *ngIf="tableForm" (ngSubmit)="addUser()">
-    <div class="max-w-3xl mx-auto">
-        <button  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add</button>
+    <div class="mx-5">
+        <button  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-5 mt-5">Add</button>
 
         <div class="flex flex-col">
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
@@ -10,7 +10,7 @@
                             <thead class="bg-gray-100 dark:bg-gray-700 text-left">
                                 <tr class="text-white">
                                     <th class="py-4 px-6" *ngFor="let header of headers">{{header}}</th>
-                                    <th colspan="2">actions</th>
+                                    <th class="py-4 px-6" colspan="2">actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700" formArrayName="items">
@@ -22,18 +22,18 @@
                                     <ng-container *ngIf="tableItem.get('editMode')?.value; else actionsTemp">
                                         <td
                                             class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            <button type="button" (click)="saveNewTableItem(tableItem)">Save</button>
+                                            <button class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded" type="button" (click)="saveNewTableItem(tableItem)">Save</button>
                                         </td>
                                         <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            <button type="button" (click)="cancelNewTableItem(tableItem, i)">Cancel</button>
+                                            <button class="bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-4 rounded"  type="button" (click)="cancelNewTableItem(tableItem, i)">Cancel</button>
                                         </td>
                                     </ng-container>
                                     <ng-template #actionsTemp>
                                         <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            <button type="button" (click)="editNewTableItem(tableItem , i)">Edit</button>
+                                            <button class="bg-violet-600 hover:bg-violet-800 text-white font-bold py-2 px-4 rounded"  type="button" (click)="editNewTableItem(tableItem , i)">Edit</button>
                                         </td>
                                         <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            <button  type="button" (click)="removeGroupFromArray(i)">Delete</button>
+                                            <button class="bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-4 rounded"  type="button" (click)="removeGroupFromArray(i)">Delete</button>
                                         </td>
                                     </ng-template>
                                 </tr>
@@ -43,11 +43,8 @@
                 </div>
             </div>
         </div>
-       <div class="flex justify-end">
-
+       <div class="flex justify-end mt-5">
             <span>Salay Sum {{salaySum$ | async}}</span>
        </div>
-   
-    
     </div>
 </form>
