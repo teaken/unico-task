@@ -10,26 +10,26 @@ import { User } from '../shared/models/user.model';
 export class HomeComponent implements OnInit {
 
   tableHeaders = ['name', 'last name', 'age'];
-  users: TableItem<User>[] = [
-    {
-      editMode: false,
-      item: {
-        id: 1,
-        name: 'César',
-        lastName: 'Redondo',
-        age: 16
-      }
-    },
-    {
-      editMode: false,
-      item: {
-        id: 2,
-        name: 'Inaaya',
-        lastName: 'Mohammad',
-        age: 50
-      }
-    }
-  ];
+  // users: TableItem<User>[] = [
+  //   {
+  //     editMode: false,
+  //     item: {
+  //       id: 1,
+  //       name: 'César',
+  //       lastName: 'Redondo',
+  //       age: 16
+  //     }
+  //   },
+  //   {
+  //     editMode: false,
+  //     item: {
+  //       id: 2,
+  //       name: 'Inaaya',
+  //       lastName: 'Mohammad',
+  //       age: 50
+  //     }
+  //   }
+  // ];
   userDisplayedProps: ItemProp[] = [
     {
       name: 'name',
@@ -49,19 +49,5 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
-  addUser() {
-    const lastUser =  this.users[this.users.length - 1];
-    const newUser: TableItem<User> = {
-      editMode: true,
-      item: {
-        id: lastUser.item.id + 1,
-        name: '',
-        lastName: '',
-        age: null
-      }
-    };
-    this.users = [...this.users, newUser];
-  }
 
 }
